@@ -1,7 +1,7 @@
 import pandas as pd
 import scipy
 from typing import Union
-from decorators import accepts
+from .decorators import accepts
 
 
 @accepts((list, pd.Series))
