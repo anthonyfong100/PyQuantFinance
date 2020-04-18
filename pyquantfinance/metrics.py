@@ -57,6 +57,7 @@ def kurtosis(r: Union[pd.Series, pd.DataFrame]):
     return exp / sigma_r**4
 
 
+@accepts((pd.Series, pd.DataFrame), float, str)
 def is_normal(r, level=0.01, method="jb"):
     """
     Applies the test to determine if a Series is normal or not
