@@ -24,6 +24,12 @@ def drawdown(returns_pct: Union[list, pd.Series]) -> pd.DataFrame:
 
 
 @accepts((pd.Series, pd.DataFrame))
+def max_drawdown(returns_pct: Union[list, pd.Series]) -> float:
+    drawdown_df = drawdown(returns_pct)
+    return drawdown_df["Drawdown"].max()
+
+
+@accepts((pd.Series, pd.DataFrame))
 def skewness(r: Union[pd.Series, pd.DataFrame]):
     """
     Alternative to scipy.stats.skew()
