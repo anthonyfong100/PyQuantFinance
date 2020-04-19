@@ -31,7 +31,7 @@ def minimize_vol(covariance_matrix: Union[pd.DataFrame, np.array],
             "In order to calculate the minimum volatility at a specified return, expected returns cannot be None")
 
     n = covariance_matrix.shape[0]  # number of assets
-    init_guess = np.repeat(1 / n, n)  # initial guess
+    init_guess = equal_weight(n)  # initial guess
     bounds = ((0.0, 1.0),) * n  # an N-tuple of 2-tuples!
     weights_sum_to_1 = {'type': 'eq',
                         'fun': lambda weights: np.sum(weights) - 1
@@ -60,6 +60,19 @@ def minimize_vol(covariance_matrix: Union[pd.DataFrame, np.array],
     return weights.x
 
 
+@accepts((int, float))
+def equal_weight(n_assets: Union[int, float]) -> np.array:
+    '''
+    Generate an array of weights for a portfolio split between n-assets equally
+
+    :param n_assets: Number of assets in portfolio
+    :type n_assets: Either int or float
+    :return: An numpy array of weights [1/n,1/n, ... , 1/n]
+    :rtype: np.array
+    '''
+    return np.repeat(1 / n_assets, n_assets)
+
+
 @accepts(float, (pd.DataFrame, np.array), (pd.DataFrame, np.array))
 def max_sharpe(riskfree_rate: float,
                expected_returns: Union[pd.DataFrame, np.array],
@@ -69,7 +82,7 @@ def max_sharpe(riskfree_rate: float,
     given the riskfree rate and expected returns and a covariance matrix
     """
     n = expected_returns.shape[0]
-    init_guess = np.repeat(1 / n, n)
+    init_guess = equal_weight(n)  # split inital allocation equally
     bounds = ((0.0, 1.0),) * n  # an N-tuple of 2-tuples!
     # construct the constraints
     weights_sum_to_1 = {'type': 'eq',
