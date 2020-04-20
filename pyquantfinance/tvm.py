@@ -1,5 +1,6 @@
 # code used for time value of money calculations
 import pandas as pd
+import numpy as np
 from typing import Union
 from .decorators import accepts
 
@@ -60,3 +61,19 @@ def pv(flows: Union[pd.Series, pd.DataFrame],
     # generate a discount table of values used to discount back
     discounts_table = _discount_table(dates, r)
     return discounts_table.T @ flows
+
+
+@accepts(float)
+def inst_to_ann(ir: float):
+    """
+    Convert an instantaneous interest rate to an annual interest rate.
+    """
+    return np.expm1(ir)
+
+
+@accepts(float)
+def ann_to_inst(ir: float):
+    """
+    Convert an instantaneous interest rate to an annual interest rate
+    """
+    return np.log1p(ir)
