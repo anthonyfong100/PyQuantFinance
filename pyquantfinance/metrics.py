@@ -145,7 +145,7 @@ def value_at_risk(returns: Union[pd.Series, pd.DataFrame],
 def cond_value_at_risk(returns: Union[pd.Series, pd.DataFrame],
                        level: int = 5) -> Union[float, pd.Series]:
     """
-    Computes the Conditional VaR of Series or DataFrame
+    Computes the Conditional VaR (historic) of Series or DataFrame
     """
     if isinstance(returns, pd.Series):
         # only take those entries with returns < value_at_risk
