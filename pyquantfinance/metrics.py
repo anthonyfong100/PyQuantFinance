@@ -1,10 +1,13 @@
+import scipy
+import sys
 import pandas as pd
 import numpy as np
-import scipy
 from typing import Union
 from scipy.stats import norm
 from .decorators import accepts
-from .tvm import annualize_rets, annualize_vol
+from .tvm import annualize_rets, annualize_vol, pv
+
+EPSILON = sys.float_info.epsilon
 
 
 @accepts((list, pd.Series))
@@ -153,3 +156,20 @@ def cond_value_at_risk(returns: Union[pd.Series, pd.DataFrame],
         return -returns[is_beyond].mean()
     else:
         return returns.aggregate(cond_value_at_risk, level=level)
+
+
+@accepts((pd.Series, pd.DataFrame),
+         (pd.Series, pd.DataFrame), (float, pd.Series))
+def funding_ratio(assets: Union[pd.Series, pd.DataFrame],
+                  liabilities: Union[pd.Series, pd.DataFrame],
+                  r: Union[float, pd.Series]):
+    """
+    Computes the funding ratio of a series of liabilities, based on an interest rate and assets
+    assets can be current / non-current, to indicate current asset create a pd.Series with
+    index =0 and value = current assets. The same logic applies for liabilities
+
+    r specifies the interest rate and can take a value of a single value or a series of value. For
+    more info look at pv code to see how is r used
+    """
+    return pv(assets, r) / (pv(liabilities, r) +
+                            EPSILON)  # prevent division by zero
