@@ -1,13 +1,19 @@
 import pandas as pd
 import numpy as np
+from typing import Union
 from .allocator import cppi_single_step
 
 
-def run_cppi(risky_r, safe_r=None, m=3, start=1000,
-             floor=0.8, riskfree_rate=0.03, drawdown=None):
+def run_cppi(risky_r: pd.Series,
+             safe_r: pd.Series = None,
+             m: Union[int, float] = 3,
+             start: Union[int, float] = 1000,
+             floor: float = 0.8,
+             riskfree_rate: float = 0.03,
+             drawdown: float = None):
     """
     Run a backtest of the CPPI strategy, given a set of returns for the risky asset
-    Returns a dictionary containing: Asset Value History, Risk Budget History, Risky Weight History
+    Returns a dictionary containing: Asset Value History, Risk Budget History, Risky Weight History.
     """
     # set up the CPPI parameters
     dates = risky_r.index
@@ -30,6 +36,9 @@ def run_cppi(risky_r, safe_r=None, m=3, start=1000,
     peak_history = pd.DataFrame().reindex_like(risky_r)
 
     for step in range(n_steps):
+
+        # if drawdown is specified the floor is constantly changing based on
+        # peak of asset
         if drawdown is not None:
             peak = np.maximum(peak, account_value)
             floor_value = peak * (1 - drawdown)
@@ -66,4 +75,3 @@ def run_cppi(risky_r, safe_r=None, m=3, start=1000,
         "peak": peak_history,
         "floor": floorval_history
     }
-
