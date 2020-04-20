@@ -60,10 +60,10 @@ def run_cppi(risky_r, safe_r=None, m=3, start=1000,
         "Risky Allocation": risky_w_history,
         "m": m,
         "start": start,
-        "floor": floor,
         "risky_r": risky_r,
         "safe_r": safe_r,
         "drawdown": drawdown,
         "peak": peak_history,
         "floor": floorval_history
     }
+
