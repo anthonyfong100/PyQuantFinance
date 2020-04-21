@@ -33,7 +33,7 @@ class bond:
         return cash_flows
 
     @accepts(bond, (float, pd.Series))
-    def price(self, discount_rate: Union[float, pd.Series] = 0.03):
+    def price(self, discount_rate: Union[float, pd.Series] = 0.03) -> float:
         """
         Computes the price of a bond that pays regular coupons until maturity
         at which time the principal and the final coupon is returned. Calculation is done via finding PV
