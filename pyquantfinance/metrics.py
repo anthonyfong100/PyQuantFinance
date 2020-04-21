@@ -173,3 +173,12 @@ def funding_ratio(assets: Union[pd.Series, pd.DataFrame],
     """
     return pv(assets, r) / (pv(liabilities, r) +
                             EPSILON)  # prevent division by zero
+
+
+@accepts((pd.Series, pd.DataFrame))
+def terminal_values(returns: Union[pd.Series, pd.DataFrame]):
+    """
+    Computes the terminal values from a set of returns supplied as a T x N DataFrame
+    Return a Series of length N indexed by the columns of rets
+    """
+    return (returns + 1).prod()
