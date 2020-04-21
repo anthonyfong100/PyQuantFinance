@@ -6,7 +6,7 @@ from typing import Union
 @accepts(np.array, np.array)
 def portfolio_return(weights: np.array, returns: np.array) -> np.array:
     """
-    Computes the return on a portfolio from constituent returns and weights
+    Computes the single time step return on a portfolio from constituent returns and weights
     weights are a numpy array or Nx1 matrix and returns are a numpy array or Nx1 matrix
     """
     return weights.T @ returns
