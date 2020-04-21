@@ -1,10 +1,13 @@
+import scipy
+import sys
 import pandas as pd
 import numpy as np
-import scipy
 from typing import Union
 from scipy.stats import norm
 from .decorators import accepts
-from .tvm import annualize_rets, annualize_vol
+from .tvm import annualize_rets, annualize_vol, pv
+
+EPSILON = sys.float_info.epsilon
 
 
 @accepts((list, pd.Series))
@@ -145,7 +148,7 @@ def value_at_risk(returns: Union[pd.Series, pd.DataFrame],
 def cond_value_at_risk(returns: Union[pd.Series, pd.DataFrame],
                        level: int = 5) -> Union[float, pd.Series]:
     """
-    Computes the Conditional VaR of Series or DataFrame
+    Computes the Conditional VaR (historic) of Series or DataFrame
     """
     if isinstance(returns, pd.Series):
         # only take those entries with returns < value_at_risk
@@ -153,3 +156,29 @@ def cond_value_at_risk(returns: Union[pd.Series, pd.DataFrame],
         return -returns[is_beyond].mean()
     else:
         return returns.aggregate(cond_value_at_risk, level=level)
+
+
+@accepts((pd.Series, pd.DataFrame),
+         (pd.Series, pd.DataFrame), (float, pd.Series))
+def funding_ratio(assets: Union[pd.Series, pd.DataFrame],
+                  liabilities: Union[pd.Series, pd.DataFrame],
+                  r: Union[float, pd.Series]):
+    """
+    Computes the funding ratio of a series of liabilities, based on an interest rate and assets
+    assets can be current / non-current, to indicate current asset create a pd.Series with
+    index =0 and value = current assets. The same logic applies for liabilities
+
+    r specifies the interest rate and can take a value of a single value or a series of value. For
+    more info look at pv code to see how is r used
+    """
+    return pv(assets, r) / (pv(liabilities, r) +
+                            EPSILON)  # prevent division by zero
+
+
+@accepts((pd.Series, pd.DataFrame))
+def terminal_values(returns: Union[pd.Series, pd.DataFrame]):
+    """
+    Computes the terminal values from a set of returns supplied as a T x N DataFrame
+    Return a Series of length N indexed by the columns of rets
+    """
+    return (returns + 1).prod()

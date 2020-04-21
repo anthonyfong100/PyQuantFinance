@@ -114,7 +114,10 @@ def cppi_single_step(account_value: Union[float, int],
                      m: Union[float, int] = 3) -> np.array:
     '''
     Run CPPI (Constant Proportional Portfolio Insurance) on a single time step,
-    returning the weights allocation of risky and riskless asset.
+    returning the weights allocation of risky and riskless asset as a np.array, and the cushion pct.
+
+    e.g. return ([0.6,0.4] , 0.2)
+    where 0.6 is the risky weight value and 0.2 is the cushion
 
     :param account_value: Current account value of portfolio at this time step
     :type account_value: float, int
@@ -128,4 +131,4 @@ def cppi_single_step(account_value: Union[float, int],
     risky_w = m * cushion_pct
     risky_w = np.clip(risky_w, 0, 1)
     safe_w = 1 - risky_w
-    return np.array([risky_w, safe_w])
+    return np.array([risky_w, safe_w]), cushion_pct
